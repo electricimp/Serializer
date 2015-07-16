@@ -3,10 +3,12 @@
 // http://opensource.org/licenses/MIT
 
 class Serializer {
+    static version = [1,0,0];
+
     // Serialize a variable of any type into a blob
     static function serialize (obj, prefix = null) {
         // Take a guess at the initial size
-        local b = blob(2000);
+        local b = blob(512);
         local header_len = 3;
         local prefix_len = (prefix == null) ? 0 : prefix.len();
 
@@ -15,8 +17,9 @@ class Serializer {
             foreach (ch in prefix) b.writen(ch, 'b');
         }
 
-        // write 3 bytes
+        // Write two bytes for length
         b.writen(0, 'w');   // 0x0000
+        // Write 1 byte for CRC
         b.writen(0, 'b');   // 0x00
 
         // Serialise the object
@@ -50,7 +53,8 @@ class Serializer {
         local pfx = prefix_len > 0 ? s.readblob(prefix_len) : null;
         local len = s.readn('w');
         local crc = s.readn('b');
-        if (s.len() != len+prefix_len+header_len) throw "Expected " + len + " bytes";
+
+        if (s.len() != len+prefix_len+header_len) throw "Expected " + (len+prefix_len+header_len) + " bytes (got " + s.len() + " bytes)";
         // Check the prefix
         if (prefix != null && pfx.tostring() != prefix.tostring()) throw "Prefix mismatch";
         // Check the CRC
@@ -74,7 +78,7 @@ class Serializer {
             case "integer":
                 return _write(b, 'i', format("%d", obj));
             case "float":
-                // All new floats will be serialized this way
+                // 'F' is for new floats, 'f' is for legacy floats
                 local bl = blob(4);
                 bl.writen(obj, 'f');
                 return _write(b, 'F', bl);
@@ -143,7 +147,7 @@ class Serializer {
                     s.seek(i+3);
                     local val = s.readblob(len).tostring().tointeger();
                     return { val = val, len = 3+len };
-                case 'F': // Float
+                case 'F': // New Floats
                     local len = s[i+1] << 8 | s[i+2];
                     s.seek(i+3);
                     local val = s.readblob(len).readn('f');
