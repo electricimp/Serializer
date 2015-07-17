@@ -64,6 +64,38 @@ class Serializer {
         return _deserialize(s, prefix_len+header_len).val;
     }
 
+    static function sizeof(obj, prefix = null) {
+        local size = 3; // header
+        if (prefix != null) size += prefix.len();
+        return size += _sizeof(obj);
+    }
+
+    static function _sizeof(obj) {
+        switch (typeof obj) {
+            case "integer":
+                return format("%d", obj).len() + 3
+            case "float":
+                return 7;
+            case "null":
+            case "function": // Silently setting this to null
+                return 1;
+            case "bool":
+                return 2;
+            case "blob":
+            case "string":
+                return obj.len()+3;
+            case "table":
+            case "array":
+                local size = 3;
+                foreach ( k,v in obj ) {
+                    size += _sizeof(k) + _sizeof(v)
+                }
+                return size;
+            default:
+                throw ("Can't serialize " + typeof obj);
+        }
+    }
+
     // Calculates an 8-bit CRC
     static function LRC8 (data, offset = 0) {
         local LRC = 0x00;

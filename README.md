@@ -108,6 +108,27 @@ for(local i = 0; i < data.timestamps.len(); i++) {
 
 ```
 
+### Serializer.sizeof(obj)
+
+The *Serializer* class needs to add a variety of metadata to Serialized objects in order to properly know how to deserialize the blobs. The *Serializer.sizeof* method can be used to quickly determin the size of an object after serialization.
+
+```squirrel
+# require "Serializer.class.nut:1.0.0"
+
+local data = {
+    "foo": "bar",
+    "timestamps": [ 1436983175, 1436984975, 1436986775, 1436988575, 1436990375],
+    "readings": [ 32.5, 33.6, 32.8, 32.9, 32.5 ],
+    "otherData": {
+        "state": true,
+        "test": "test"
+    }
+}
+
+// Check how large our blob will be before serializing
+server.log(Serializer.sizeof(data));
+```
+
 # License
 
 The Serializer class is licensed under [MIT License](https://github.com/electricimp/serializer/tree/master/LICENSE).
