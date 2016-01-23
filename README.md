@@ -132,3 +132,8 @@ server.log(Serializer.sizeof(data));
 # License
 
 The Serializer class is licensed under [MIT License](https://github.com/electricimp/serializer/tree/master/LICENSE).
+
+## Development
+
+This repository uses [git-flow](http://jeffkreeftmeijer.com/2010/why-arent-you-using-git-flow/).
+Please make your pull requests to the __develop__ branch.
