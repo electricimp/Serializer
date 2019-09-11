@@ -3,7 +3,7 @@
 // http://opensource.org/licenses/MIT
 
 class Serializer {
-    static version = [1,0,0];
+    static version = [1,1,0];
 
     // Serialize a variable of any type into a blob
     static function serialize (obj, prefix = null) {
@@ -161,8 +161,10 @@ class Serializer {
             b.writen(payloadlen & 0xFF, 'b');
         }
         if (typeof payload == "string" || typeof payload == "blob") {
-            foreach (ch in payload) {
-                b.writen(ch, 'b');
+            if (payload.len() > 0) {
+                foreach (ch in payload) {
+                    b.writen(ch, 'b');
+                }
             }
         }
     }
