@@ -124,9 +124,20 @@ class Serializer {
             case "string":
                 return _write(b, 's', obj);
             case "table":
+                local sorted = array(obj.len());
+                local i = 0;
+                foreach ( k,v in obj ) {
+                    sorted[i++] = [k,v];
+                }
+                sorted.sort( @( first, second ) first[0] <=> second[0] );
+                _write(b, 't', obj.len());
+                foreach ( v in sorted ) {
+                    _serialize(b, v[0]);
+                    _serialize(b, v[1]);
+                }
+                return;
             case "array":
-                local t = (typeof obj == "table") ? 't' : 'a';
-                _write(b, t, obj.len());
+                _write(b, 'a', obj.len());
                 foreach ( k,v in obj ) {
                     _serialize(b, k);
                     _serialize(b, v);
@@ -160,7 +171,7 @@ class Serializer {
             b.writen(payloadlen >> 8 & 0xFF, 'b');
             b.writen(payloadlen & 0xFF, 'b');
         }
-        if (typeof payload == "string" || typeof payload == "blob") {
+		if (typeof payload == "string" || typeof payload == "blob") {
             if (payload.len() > 0) {
                 foreach (ch in payload) {
                     b.writen(ch, 'b');
