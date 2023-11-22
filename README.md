@@ -2,9 +2,9 @@
 
 The Serializer call includes two `static` methods that allow you serialize (nearly) any Squirrel object into a blob, and deserialize perviously serialized objects. This is particulairly useful if you're planning to store information with [hardware.spiflash](https://developer.electricimp.com/api/hardware/spiflash) or the with the [SPIFlash Library](https://github.com/electricimp/spiflash/tree/v1.0.0).
 
-*Note* The *Serializer* class only uses `static` methods, and as a result does not to be initialized through a constructor.
+**Note** The *Serializer* class only uses `static` methods, and as a result does not to be initialized through a constructor.
 
-**To add this library to your project, add** `#require "Serializer.class.nut:1.0.0"` **to the top of your device code.**
+**To add this library to your project, add** `#require "Serializer.class.nut:1.1.0"` **to the top of your device code.**
 
 ## Serializable Squirrel ##
 
