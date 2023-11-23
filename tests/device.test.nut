@@ -64,17 +64,25 @@ class SerializerTestCase extends ImpTestCase {
 
     function testGoodTypes() {
 
+        // Test valid serializable types that are not included in `_rawData`
         local td = {
             "good_blob": blob(128),
             "good_null": null
         };
 
+        // Fill the blob
         for (local i = 0 ; i < 128 ; i++) td.good_blob[i] = 0xFF;
 
         local od = Serializer.serialize(td);
         local op = Serializer.deserialize(od);
         this.assertTrue(op.good_blob.len() == 128);
         this.assertTrue(op.good_blob[65] == 0xFF);
+
+        local count = 0;
+        foreach (value in op.good_blob) {
+            if (value == 0xFF) count++;
+        }
+        this.assertTrue(count == op.good_blob.len());
         this.assertTrue(op.good_null == null);
     }
 
